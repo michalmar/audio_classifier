@@ -35,6 +35,7 @@ def load_model(netx,modpath):
         new_state_dict[name] = v
     netx.load_state_dict(new_state_dict)
 
+
 def getFeat(extractor,inpt):
     # return pytorch tensor 
     extractor.eval()
@@ -43,65 +44,80 @@ def getFeat(extractor,inpt):
         indata = indata.cuda()
 
     pred = extractor(indata)
-    print pred.size()
+    # print( pred.size())
+
     if len(pred.size()) > 2:
         gpred = globalpoolfn(pred,kernel_size=pred.size()[2:])
         gpred = gpred.view(gpred.size(0),-1)
 
     return gpred
 
+
 #keep sample rate 44100, no need 
-def main(filename,srate=44100):
-    try:
-        y, sr = lib.load(filename,sr=None)
-    except:
-        raise IOError('Give me an audio  file which I can read!!')
-    
-    if len(y.shape) > 1:
-        print 'Mono Conversion', 
-        y = lib.to_mono(y)
+def main(foldername, srate=44100):
 
-    if sr != srate:
-        print 'Resampling to {}'.format(srate),
-        y = lib.resample(y,sr,srate)
-
-        
-    mel_feat = lib.feature.melspectrogram(y=y,sr=srate,n_fft=n_fft,hop_length=hop_length,n_mels=128)
-    inpt = lib.power_to_db(mel_feat).T
-    
-    #quick hack for now
-    if inpt.shape[0] < 128:
-        inpt = np.concatenate((inpt,np.zeros((128-inpt.shape[0],n_mels))),axis=0)
-    
-
-    # input needs to be 4D, batch_size X 1 X inpt_size[0] X inpt_size[1]
-    inpt = np.reshape(inpt,(1,1,inpt.shape[0],inpt.shape[1]))
-    print inpt.shape
-
+    # init the model
     netType = getattr(netark,trainType)
     netx = netType(527,netwrkgpl)
     load_model(netx,pre_model_path)
-
     
     if usegpu:
         netx.cuda()
     
     feat_extractor = exm.featExtractor(netx,featType)
-    
-    pred = getFeat(feat_extractor,inpt)
 
-    #numpy arrays
-    feature = pred.data.cpu().numpy()
-    print feature.shape
+
+    features = {}
+    files = os.listdir(foldername)
+    for filename in files:
+
+        print(filename)
+        fileparts = filename.split('.')
+        assert fileparts[1] == 'wav'
+
+        filepath = os.path.join(foldername, filename)
+        
+        try:
+            y, sr = lib.load(filepath,sr=None)
+        except:
+            raise IOError('Give me an audio  file which I can read!!')
+        
+        if len(y.shape) > 1:
+            print( 'Mono Conversion',  )
+            y = lib.to_mono(y)
+
+        if sr != srate:
+            print( 'Resampling to {}'.format(srate), )
+            y = lib.resample(y,sr,srate)
+
+            
+        mel_feat = lib.feature.melspectrogram(y=y,sr=srate,n_fft=n_fft,hop_length=hop_length,n_mels=128)
+        inpt = lib.power_to_db(mel_feat).T
+        
+        #quick hack for now
+        if inpt.shape[0] < 128:
+            inpt = np.concatenate((inpt,np.zeros((128-inpt.shape[0],n_mels))),axis=0)
+        
+
+        # input needs to be 4D, batch_size X 1 X inpt_size[0] X inpt_size[1]
+        inpt = np.reshape(inpt,(1,1,inpt.shape[0],inpt.shape[1]))
+        # print(inpt.shape) 
+
+        pred = getFeat(feat_extractor,inpt)
+
+        #numpy arrays
+        feature = pred.data.cpu().numpy()
+        print(feature) 
+
+        features[fileparts[0]] = np.squeeze(feature)
 
     # prediction for each segment in each column
-    return feature
+    return features
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        raise ValueError(' You need to give filename as first argument..Duhhh!!')
-    if not os.path.isfile(sys.argv[1]):
-        raise ValueError('give me a audio file which exist!!!')
+        raise ValueError(' You need to give folder as first argument..Duhhh!!')
     
-    main(sys.argv[1])
+    features = main(sys.argv[1])
+    print(features)

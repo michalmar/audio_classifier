@@ -9,13 +9,13 @@ class featExtractor(nn.Module):
 
     def __init__(self,model,layer_name):
         super(featExtractor,self).__init__()
-        for k, mod in model._modules.iteritems():
+        for k, mod in model._modules.items():
             self.add_module(k,mod)
         self.featLayer = layer_name
 
     def forward(self,x):
-        for nm, module in self._modules.iteritems():
+        for nm, module in self._modules.items():
             x = module(x)
             if nm == self.featLayer:
-		out = x
+                out = x
         return out
