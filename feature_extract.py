@@ -77,10 +77,14 @@ def main(foldername, srate=44100):
     for filename in files:
 
         print(filename)
-        fileparts = filename.split('.')
-        assert fileparts[1] == 'wav'
+        # fileparts = filename.split('.')
+        # assert fileparts[1] == 'wav'
 
         filepath = os.path.join(foldername, filename)
+        
+        filenameonly, file_extension = os.path.splitext(filename)
+        # print(f"{filenameonly}, {file_extension}")
+        assert file_extension == '.wav'
         
         try:
             y, sr = lib.load(filepath,sr=None)
@@ -114,7 +118,7 @@ def main(foldername, srate=44100):
         feature = pred.data.cpu().numpy()
         print(feature) 
 
-        features[fileparts[0]] = np.squeeze(feature)
+        features[filenameonly] = np.squeeze(feature)
 
     # prediction for each segment in each column
     return features
@@ -129,4 +133,4 @@ if __name__ == '__main__':
     
     if len(sys.argv) > 2:
         df = pd.DataFrame(features).T
-        df.to_csv(sys.argv[2])
+        df.to_csv(sys.argv[2], header=False)

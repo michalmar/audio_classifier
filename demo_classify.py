@@ -10,12 +10,18 @@ import pandas as pd
 
 
 
-df = pd.read_csv('hc.csv', index_col=0)
+df = pd.read_csv('./features/out.csv', index_col=0, header=None)
+
+df.head()
 
 X = df.values
 y = df.index
-y1 = np.asarray([i.split('-')[-1] for i in y])
 
+classes = ['cough', 'other']
+
+# y1 = np.asarray([i.split('-')[-1] for i in y])
+
+y1 = np.asarray([classes.index(i.split('-')[0]) for i in y])
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier

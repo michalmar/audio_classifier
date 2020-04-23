@@ -1,20 +1,23 @@
-## Details "Knowledge Transfer From Weakly Labeled Audio Using Convolutional Neural Network For Sound Events And Scenes" Anurag Kumar, Maksim Khadkevich, Christian Fügen 
-## ICASSP 2018
+# Audio Classifier
 
-### https://arxiv.org/pdf/1711.01369.pdf
+This repo is based on paper **ICASSP 2018** https://arxiv.org/pdf/1711.01369.pdf 
+"Knowledge Transfer From Weakly Labeled Audio Using Convolutional Neural Network For Sound Events And Scenes" Anurag Kumar, Maksim Khadkevich, Christian Fügen 
+ -> forked from: https://github.com/anuragkr90/weak_feature_extractor
 
-## Check out this webpage "http://www.cs.cmu.edu/~alnu/TLWeak.htm" for more results and details
+## Installation
 
-### This code provides the  bare minimum to obtain audio representations using Deep CNN models trained on weakly labeled data (Audioset - Balanced set)
+install ffmpeg: https://pythonbasics.org/convert-mp3-to-wav/
+install requirements
 
-#### 1. call the main function in feat_extractor - returns 1024 or 527 dimensional features
+### RUN
+1. convert MP3 to WAV `python convert_mp3_to_wav.py "../COVID-19-train-audio/not-covid19-coughs/PMID-16436200" cough`
 
-#### 2. It will work with audio of any duration but I would suggest to pad it to make it at least 1.5 seconds for now. 
+1. [OPTIONAL] prepare sample data (other class) 
 
-#### 3. You can turn on gpu use by 'usegpu' variable. Although, for very long audio (more than a few minutes) you might end up getting gpu memory error. 
+`wget https://mmadlbs.blob.core.windows.net/share/ambient.mp3`
+`python convert_wav_to_slices_by_time.py ./tmp 2`
 
-#### The trained CNN is used to learn meaningful representations for a given audio recording. The classification task can be done by training another classifier on these representations (linear SVMs in this case). 
+1. extract features `python feature_extract.py "./data" "./features/out.csv"` 
 
-#### 4. class names and id in classes_id_name.txt for the 527 sounds in audioset over which the model was trained. 
 
-#### 6. Doubts??? -  send me an email. 
+1. run classification ... so far manually
