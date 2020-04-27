@@ -19,7 +19,12 @@ y = df.index
 
 classes = ['cough', 'other']
 
-# y1 = np.asarray([i.split('-')[-1] for i in y])
+from itertools import groupby
+
+
+class_distribution = {key: len(list(group)) for key, group in groupby([i.split('-')[0] for i in y])}
+
+print(f"Class distribution in dataset: {class_distribution}")
 
 y1 = np.asarray([classes.index(i.split('-')[0]) for i in y])
 

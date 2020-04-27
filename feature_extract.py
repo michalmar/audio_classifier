@@ -74,6 +74,10 @@ def main(foldername, srate=44100):
 
     features = {}
     files = os.listdir(foldername)
+    files = [f for f in files if f.endswith('.wav')]
+    
+    print(f"File (wav) count: {len(files)}")
+
     for filename in files:
 
         print(filename)

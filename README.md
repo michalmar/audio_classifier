@@ -10,7 +10,10 @@ install ffmpeg: https://pythonbasics.org/convert-mp3-to-wav/
 install requirements
 
 ### RUN
-1. convert MP3 to WAV `python convert_mp3_to_wav.py "../COVID-19-train-audio/not-covid19-coughs/PMID-16436200" cough`
+1. convert MP3 to WAV 
+`python convert_mp3_to_wav.py "../COVID-19-train-audio/not-covid19-coughs/PMID-16436200" cough`
+`python convert_mp3_to_wav.py "../COVID-19-train-audio/not-covid19-coughs/PMID-32095775" cough`
+
 
 1. [OPTIONAL] prepare sample data (other class) 
 

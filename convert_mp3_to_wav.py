@@ -2,16 +2,7 @@ import sys
 import os
 from os import path
 from pydub import AudioSegment
-
-# # files                                                                         
-# src = "../COVID-19-train-audio/not-covid19-coughs/PMID-16436200/1745-9974-2-1-S1.mp3"
-# dst = "./data/test.wav"
-
-# # convert wav to mp3                                                            
-# sound = AudioSegment.from_mp3(src)
-# sound = sound.set_frame_rate(44100)
-# sound.export(dst, format="wav")
-
+import uuid
 
 # os.getcwd()
 
@@ -36,7 +27,7 @@ def main(foldername, classname="cough", srate=44100):
         src = filepath
 
         #TODO
-        dst = f"./data/{classname}-{filename}.wav"
+        dst = f"./data/{classname}-{uuid.uuid1()}.wav"
 
         # convert wav to mp3                                                            
         sound = AudioSegment.from_mp3(src)
